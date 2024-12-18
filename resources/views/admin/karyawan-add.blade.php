@@ -32,12 +32,11 @@
                     </li>
                 </ul>
             </div>
-
             <div class="wg-box">
                 <form action="{{ route('admin.karyawan.store') }}" method="POST">
                     @csrf
                     @if ($errors->any())
-                        <div class="alert alert-danger">
+                        <div class="alert alert-danger" style="font-size: 1.5rem; padding: 20px;">
                             <ul>
                                 @foreach ($errors->all() as $error)
                                     <li>{{ $error }}</li>
@@ -45,7 +44,6 @@
                             </ul>
                         </div>
                     @endif
-
                     <div class="form-group">
                         <label for="name" class="form-label">Nama</label>
                         <input type="text" name="name" id="name" value="{{ old('name') }}"
@@ -59,9 +57,9 @@
                     <div class="form-group pt-3">
                         <label for="mobile" class="form-label">Nomor HP</label>
                         <input type="text" name="mobile" id="mobile" value="{{ old('mobile') }}"
-                            class="form-control form-input" required>
+                            class="form-control form-input" required maxlength="15" pattern="\d*"
+                            oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                     </div>
-                    <!-- Dropdown Jenis Genteng -->
                     <div class="form-group pt-3">
                         <label for="jenis_genteng_id" class="form-label">Jenis Genteng</label>
                         <select name="jenis_genteng_id" id="jenis_genteng_id" class="form-select fs-5 form-input">
@@ -83,9 +81,6 @@
                         <input type="password" name="password_confirmation" id="password_confirmation"
                             class="form-control form-input" required>
                     </div>
-
-                    
-
                     <button type="submit" class="btn btn-primary tf-button style-1 w208">Tambah Karyawan</button>
                 </form>
             </div>
@@ -101,13 +96,11 @@
 
         .form-label {
             font-size: 1.25rem;
-            /* Besarkan ukuran teks label */
             font-weight: bold;
         }
 
         .form-input {
             font-size: 1rem;
-            /* Besarkan ukuran teks input */
             padding: 0.75rem;
             border-radius: 0.375rem;
         }

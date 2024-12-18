@@ -24,33 +24,39 @@
                     </li>
                 </ul>
             </div>
-
             <div class="wg-box">
                 <div class="flex items-center justify-between gap10 flex-wrap">
                     <a class="tf-button style-1 w208" href="{{ route('admin.karyawan.add') }}">
                         <i class="icon-plus"></i>Tambah
                     </a>
                 </div>
-                <div class="wg-table">
-                    @if (session('success'))
+                @if (session('success'))
                                 <div class="alert alert-success" style="font-size: 1.5rem; padding: 20px;">
                                     {{ session('success') }}
                                 </div>
                             @endif
+                @if(session('error'))
+                    <div class="alert alert-danger" style="font-size: 1.5rem; padding: 20px;">
+                        {{ session('error') }}
+                    </div>
+                @endif
+                <div class="wg-table">
                     <div class="table-responsive">
                         <table class="table table-striped table-bordered">
                             <thead>
                                 <tr>
-                                    <th>Nama</th>
-                                    <th>Email</th>
-                                    <th>Nomor HP</th>
-                                    <th>Jenis Genteng</th>
-                                    <th>Atur</th>
+                                    <th style="width: 5rem;">No.</th> 
+                                    <th style="width: 18rem;">Nama</th>
+                                    <th style="width: 18rem;">Email</th>
+                                    <th style="width: 18rem;">Nomor HP</th>
+                                    <th style="width: 18rem;">Jenis Genteng</th>
+                                    <th >Atur</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($karyawan as $employee)
+                                @foreach ($karyawan as $index => $employee)
                                     <tr>
+                                        <td>{{ $index + 1 }}</td> 
                                         <td>{{ $employee->name }}</td>
                                         <td>{{ $employee->email }}</td>
                                         <td>{{ $employee->mobile }}</td>
@@ -59,7 +65,7 @@
                                         </td>
                                         <td>
                                             <div class="list-icon-function">
-                                                <a href="{{ route('admin.hasil-kerja.karyawan', $employee->id) }}">
+                                                <a href="{{ route('admin.karyawan.check-hasil-kerja', $employee->id) }}">
                                                     <div class="item eye">
                                                         <i class="icon-eye"></i>
                                                     </div>
@@ -69,8 +75,7 @@
                                                         <i class="icon-edit-3"></i>
                                                     </div>
                                                 </a>
-                                                <form action="{{ route('admin.karyawan.delete', ['id' => $employee->id]) }}"
-                                                    method="POST">
+                                                <form action="{{ route('admin.karyawan.delete', ['id' => $employee->id]) }}" method="POST">
                                                     @csrf
                                                     @method('DELETE')
                                                     <div class="item text-danger delete">
@@ -81,7 +86,7 @@
                                         </td>
                                     </tr>
                                 @endforeach
-                            </tbody>
+                            </tbody>                            
                         </table>
                     </div>
                     <div class="divider"></div>
@@ -93,8 +98,6 @@
         </div>
     </div>
 @endsection
-
-
 
 @push('scripts')
     <script>

@@ -38,15 +38,13 @@
                             <form name="account_edit_form" action="{{ route('admin.settings.update') }}" method="POST"
                                 class="form-new-product form-style-1 needs-validation" novalidate="">
                                 @csrf
-                                {{-- Flash Message for Success --}}
                                 @if (session('success'))
                                     <div class="alert alert-success">
                                         {{ session('success') }}
                                     </div>
                                 @endif
-                                {{-- Validation Errors --}}
                                 @if ($errors->any())
-                                    <div class="alert alert-danger">
+                                    <div class="alert alert-danger" style="font-size: 1.5rem; padding: 20px;">
                                         <ul>
                                             @foreach ($errors->all() as $error)
                                                 <li>{{ $error }}</li>
@@ -61,9 +59,11 @@
                                         tabindex="0" value="{{ $admin->name }}" aria-required="true" required="">
                                 </fieldset>
                                 <fieldset class="name">
-                                    <div class="body-title">Nomor Telepon <span class="tf-color-1">*</span></div>
+                                    <div class="body-title">Nomor HP <span class="tf-color-1">*</span></div>
                                     <input class="flex-grow" type="text" placeholder="Nomor Telepon" name="mobile"
-                                        tabindex="0" value="{{ $admin->mobile }}" aria-required="true" required="">
+                                        tabindex="0" value="{{ $admin->mobile }}" aria-required="true" required
+                                        maxlength="15" pattern="\d*"
+                                        oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                                 </fieldset>
                                 <fieldset class="name">
                                     <div class="body-title">Alamat Email <span class="tf-color-1">*</span></div>

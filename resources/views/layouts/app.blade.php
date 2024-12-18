@@ -18,12 +18,13 @@
     <link rel="stylesheet" href="{{ asset('font/fonts.css') }}">
     <link rel="stylesheet" href="{{ asset('icon/style.css') }}">
     <link rel="shortcut icon" href="{{ asset('assets/images/logo_title.png') }}">
-    <link rel="apple-touch-icon-precomposed" href="{{ asset('images/favicon.ico') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('css/sweetalert.min.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('css/custom.css') }}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-    @stack("styles")
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    @stack('styles')
 </head>
+
 <body class="body">
     <div id="wrapper">
         <div id="page" class="">
@@ -31,8 +32,10 @@
                 <div class="section-menu-left">
                     <div class="box-logo">
                         <a href="#" id="site-logo-inner">
-                            <img class="" id="logo_header_1" alt="" src="{{ asset('assets/images/logo.png') }}"
-                                data-light="{{ asset('images/logo/logo.png') }}" data-dark="{{ asset('images/logo/logo.png') }}">
+                            <img class="" id="logo_header_1" alt=""
+                                src="{{ asset('assets/images/logo.png') }}"
+                                data-light="{{ asset('images/logo/logo.png') }}"
+                                data-dark="{{ asset('images/logo/logo.png') }}">
                         </a>
                         <div class="button-show-hide">
                             <i class="icon-menu-left"></i>
@@ -65,21 +68,21 @@
                                         <div class="text">Rekap Hasil</div>
                                     </a>
                                 </li>
-                                
                                 <li class="menu-item">
                                     <a href="{{ route('user.settings.index') }}" class="">
                                         <div class="icon"><i class="bi bi-person-fill"></i></div>
                                         <div class="text">Profil Saya</div>
                                     </a>
-                                </li>                                
-                                
+                                </li>
+
                                 <li class="menu-item">
                                     <form method="POST" action="{{ route('logout') }}" id="logout-form">
                                         @csrf
-                                    <a href="{{ route('logout') }}" class="" onclick="event.preventDefault();document.getElementById('logout-form').submit();">
-                                        <div class="icon"><i class="icon-log-out"></i></div>
-                                        <div class="text">Logout</div>
-                                    </a>
+                                        <a href="{{ route('logout') }}" class=""
+                                            onclick="event.preventDefault();document.getElementById('logout-form').submit();">
+                                            <div class="icon"><i class="icon-log-out"></i></div>
+                                            <div class="text">Logout</div>
+                                        </a>
                                     </form>
                                 </li>
                             </ul>
@@ -100,7 +103,7 @@
                                         <button class="btn btn-secondary dropdown-toggle" type="button"
                                             id="dropdownMenuButton3" data-bs-toggle="dropdown" aria-expanded="false">
                                             <span class="header-user wg-user">
-                                                
+
                                                 <span class="flex flex-column">
                                                     <span class="body-title mb-2">{{ Auth::user()->name }}</span>
                                                     <span class="text-tiny">Karyawan</span>
@@ -118,9 +121,11 @@
                                                 </a>
                                             </li>
                                             <li>
-                                                <form method="POST" action="{{ route('logout') }}" id="logout-form-2">
+                                                <form method="POST" action="{{ route('logout') }}"
+                                                    id="logout-form-2">
                                                     @csrf
-                                                    <a href="{{ route('logout') }}" class="user-item" onclick="event.preventDefault();document.getElementById('logout-form-2').submit();">
+                                                    <a href="{{ route('logout') }}" class="user-item"
+                                                        onclick="event.preventDefault();document.getElementById('logout-form-2').submit();">
                                                         <div class="icon">
                                                             <i class="icon-log-out"></i>
                                                         </div>
@@ -128,8 +133,8 @@
                                                     </a>
                                                 </form>
                                             </li>
-                                            
-                                            
+
+
                                         </ul>
                                     </div>
                                 </div>
@@ -147,14 +152,14 @@
         </div>
     </div>
 
-    <script src="{{ asset ('js/jquery.min.js') }}"></script>
-    <script src="{{ asset ('js/bootstrap.min.js') }}"></script>
-    <script src="{{ asset ('js/bootstrap-select.min.js') }}"></script>   
-    <script src="{{ asset ('js/sweetalert.min.js') }}"></script>    
-    <script src="{{ asset ('js/apexcharts/apexcharts.js') }}"></script>
-    <script src="{{ asset ('js/main.js') }}"></script>
+    <script src="{{ asset('js/jquery.min.js') }}"></script>
+    <script src="{{ asset('js/bootstrap.min.js') }}"></script>
+    <script src="{{ asset('js/bootstrap-select.min.js') }}"></script>
+    <script src="{{ asset('js/sweetalert.min.js') }}"></script>
+    <script src="{{ asset('js/apexcharts/apexcharts.js') }}"></script>
+    <script src="{{ asset('js/main.js') }}"></script>
 
-    @stack("scripts")
+    @stack('scripts')
 </body>
-</html>
 
+</html>

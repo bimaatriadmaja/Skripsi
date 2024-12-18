@@ -9,7 +9,7 @@
         </div>
         <div class="main-content-wrap">
             <div class="flex items-center flex-wrap justify-between gap20 mb-27">
-                <h3>Pengaturan Gaji</h3>
+                <h3>Kalkulasi Gaji</h3>
                 <ul class="breadcrumbs flex items-center flex-wrap justify-start gap10">
                     <li>
                         <a href="{{ route('admin.index') }}">
@@ -27,22 +27,29 @@
             <div class="wg-box">
                 <div class="wg-table">
                     @if (session('success'))
-                                <div class="alert alert-success" style="font-size: 1.5rem; padding: 20px;">
-                                    {{ session('success') }}
-                                </div>
-                            @endif
+                        <div class="alert alert-success" style="font-size: 1.5rem; padding: 20px;">
+                            {{ session('success') }}
+                        </div>
+                    @endif
+                    @error('gaji_per_seribu')
+                        <div class="alert alert-danger" style="font-size: 1.5rem; padding: 20px;">
+                            {{ $message }}
+                        </div>
+                    @enderror
                     <div class="table-responsive">
                         <table class="table table-striped table-bordered">
                             <thead>
                                 <tr>
-                                    <th>Nama Jenis</th>
-                                    <th>Gaji per Seribu</th>
+                                    <th style="width: 5rem;">No.</th>
+                                    <th style="width: 18rem;">Nama Jenis</th>
+                                    <th style="width: 18rem;">Gaji per Seribu</th>
                                     <th>Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @forelse ($jenisGenteng as $index => $jenis)
                                     <tr>
+                                        <td>{{ $index + 1 }}</td>
                                         <td>{{ $jenis->nama_jenis }}</td>
                                         <td>Rp {{ number_format($jenis->gaji_per_seribu, 0, ',', '.') }}</td>
                                         <td>
@@ -53,7 +60,9 @@
                                                         <i class="icon-edit-3"></i>
                                                     </div>
                                                 </a>
-                                                <form action="{{ route('admin.jenis-genteng.delete', ['id' => $jenis->id]) }}" method="POST">
+                                                <form
+                                                    action="{{ route('admin.jenis-genteng.delete', ['id' => $jenis->id]) }}"
+                                                    method="POST">
                                                     @csrf
                                                     @method('DELETE')
                                                     <div class="item text-danger delete">
@@ -61,7 +70,7 @@
                                                     </div>
                                                 </form>
                                             </div>
-                                        </td>                                        
+                                        </td>
                                     </tr>
                                 @empty
                                     <tr>
@@ -80,18 +89,20 @@
                 <form action="{{ route('admin.jenis-genteng.store') }}" method="POST">
                     @csrf
                     <div class="mb-5">
-                        <label for="nama_jenis" class="form-label" style="font-size: 1.2rem; font-weight: bold; margin-bottom: 0.7rem;">Nama Jenis</label>
-                        <input type="text" class="form-control" id="nama_jenis" name="nama_jenis" required style="font-size: 1.2rem; font-weight: bold; padding: 0.75rem;">
+                        <label for="nama_jenis" class="form-label"
+                            style="font-size: 1.2rem; font-weight: bold; margin-bottom: 0.7rem;">Nama Jenis</label>
+                        <input type="text" class="form-control" id="nama_jenis" name="nama_jenis" required
+                            style="font-size: 1.2rem; font-weight: bold; padding: 0.75rem;">
                     </div>
                     <div class="mt-5">
-                        <label for="gaji_per_seribu" class="form-label" style="font-size: 1.2rem; font-weight: bold; margin-bottom: 0.7rem;">Gaji per Seribu</label>
-                        <input type="number" class="form-control" id="gaji_per_seribu" name="gaji_per_seribu" required style="font-size: 1.2rem; font-weight: bold; padding: 0.75rem;">
+                        <label for="gaji_per_seribu" class="form-label"
+                            style="font-size: 1.2rem; font-weight: bold; margin-bottom: 0.7rem;">Gaji per Seribu</label>
+                        <input type="number" class="form-control" id="gaji_per_seribu" name="gaji_per_seribu" required
+                            style="font-size: 1.2rem; font-weight: bold; padding: 0.75rem;">
                     </div>
                     <button type="submit" class="btn btn-primary tf-button style-1 w208 mt-5">Tambah</button>
                 </form>
             </div>
-
-            
         </div>
     </div>
 @endsection

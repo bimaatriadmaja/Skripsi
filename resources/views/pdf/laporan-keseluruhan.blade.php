@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Laporan Hasil Kerja {{ $karyawan->name }}</title>
+    <title>Laporan Keseluruhan Karyawan</title>
     <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;600&display=swap" rel="stylesheet">
     <style>
         body {
@@ -155,15 +155,12 @@
     <div class="divider"></div>
     <div class="container">
         <div class="text-center">
-            <h2>Laporan Keseluruhan {{ $karyawan->name }}</h2>
-            <p><strong>Periode: {{ $startDateFormatted }} - {{ $endDateFormatted }}</strong></p>
-            <p class="text-center" style="margin-bottom: 20px">
-                <strong>Jenis Genteng:</strong> {{ $firstData->nama_jenis ?? 'Tidak Ada Data' }} |
-                <strong>Gaji per Seribu:</strong> Rp
-                {{ number_format($firstData->gaji_per_seribu ?? 0, 0, ',', '.') }}
+            <h2 style="margin-top: 30px;">Laporan Keseluruhan Karyawan</h2>
+            <p><strong>Periode
+                    {{ \Carbon\Carbon::parse(request('start_date'))->locale('id')->isoFormat('D MMMM YYYY') }} -
+                    {{ \Carbon\Carbon::parse(request('end_date'))->locale('id')->isoFormat('D MMMM YYYY') }}</strong>
             </p>
         </div>
-
         <table>
             <thead>
                 <tr>
@@ -177,15 +174,13 @@
             <tbody>
                 <tr class="total-row">
                     <td>Total</td>
-                    <td>{{ $totalPendingApproval }}</td>
-                    <td>{{ $totalBelumDibayar }}</td>
-                    <td>{{ $totalSudahDibayar }}</td>
-                    <td>{{ $totalDitolak }}</td>
+                    <td>{{ $total_pending_approval }}</td>
+                    <td>{{ $total_belum_dibayar }}</td>
+                    <td>{{ $total_sudah_dibayar }}</td>
+                    <td>{{ $total_ditolak }}</td>
                 </tr>
             </tbody>
         </table>
-
-        <!-- Tabel Total Genteng dan Gaji -->
         <table>
             <thead>
                 <tr>
@@ -197,67 +192,64 @@
             </thead>
             <tbody>
                 <tr class="total-row">
-                    <td>{{ $totalGentengGajiBelumDiambil }} Biji</td>
-                    <td>{{ $totalGentengGajiSudahDiambil }} Biji</td>
-                    <td>Rp {{ number_format($totalGaji, 0, ',', '.') }}</td>
-                    <td>Rp {{ number_format($totalGajiDiambil, 0, ',', '.') }}</td>
+                    <td>{{ $total_genteng_gajiblmdiambil }} Biji</td>
+                    <td>{{ $total_genteng_gajidiambil }} Biji</td>
+                    <td>Rp {{ number_format($total_gaji, 0, ',', '.') }}</td>
+                    <td>Rp {{ number_format($total_gaji_diambil, 0, ',', '.') }}</td>
                 </tr>
             </tbody>
         </table>
     </div>
-
     <div class="divider"></div>
-    <div class="table-container">
-        <table>
-            <thead>
-                <tr>
-                    <th>Tanggal Kerja</th>
-                    <th>Jumlah Genteng (Gaji)</th>
-                    <th>Catatan</th>
-                    <th>Status</th>
-                    <th>Pembayaran</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($hasilKerja as $hasil)
+    <h2 class="text-center" style="margin-top: 50px;">Rincian Per Karyawan</h2>
+    @foreach ($data as $karyawan)
+        <div style="margin-bottom: 30px;">
+            <div class="section-title"><strong> Hasil Kerja dari {{ $karyawan->karyawan_name }}</strong></div>
+            <p><strong>Jenis Genteng:</strong> {{ $karyawan->nama_jenis ?? 'Tidak Ada Data' }} | <strong>Gaji per Seribu:</strong> Rp {{ number_format($karyawan->gaji_per_seribu ?? 0, 0, ',', '.') }}</p>
+            <table>
+                <thead>
                     <tr>
-                        <td>{{ \Carbon\Carbon::parse($hasil->tanggal_kerja)->translatedFormat('j F Y') }}</td>
-
-                        <td>
-                            {{ $hasil->jumlah_genteng }} Biji
-                            @if (isset($hasil->gaji) && !is_null($hasil->gaji))
-                                <span class="text-muted ms-2">(Rp.
-                                    {{ number_format($hasil->gaji, 0, ',', '.') }})</span>
-                            @endif
-                        </td>
-                        <td>{{ $hasil->catatan }}</td>
-                        <td>
-                            @if ($hasil->status == 'approved')
-                                <span class="badge bg-success">Disetujui</span>
-                            @elseif($hasil->status == 'rejected')
-                                <span class="badge bg-danger">Ditolak</span>
-                            @elseif($hasil->status == 'pending')
-                                <span class="badge bg-warning">Ditunda</span>
-                            @endif
-                        </td>
-                        <td>
-                            @if ($hasil->payment_status == 'paid')
-                                <span class="badge bg-primary">Sudah diambil</span>
-                            @else
-                                <span class="badge bg-danger">Belum diambil</span>
-                            @endif
-                        </td>
+                        <th>Status Hasil Kerja</th>
+                        <th>Diproses</th>
+                        <th>Disetujui & Gaji Belum Diambil</th>
+                        <th>Disetujui & Gaji Sudah Diambil</th>
+                        <th>Ditolak</th>
                     </tr>
-                @endforeach
-            </tbody>
-        </table>
-    </div>
-
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Total</td>
+                        <td>{{ $karyawan->jumlah_pending_approval }}</td>
+                        <td>{{ $karyawan->jumlah_belum_dibayar }}</td>
+                        <td>{{ $karyawan->jumlah_sudah_dibayar }}</td>
+                        <td>{{ $karyawan->jumlah_ditolak }}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Total Genteng (Gaji Belum Diambil)</th>
+                        <th>Total Genteng (Gaji Sudah Diambil)</th>
+                        <th>Gaji Belum Diambil</th>
+                        <th>Gaji Sudah Diambil</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>{{ $karyawan->total_genteng_gajiblmdiambil }} Biji</td>
+                        <td>{{ $karyawan->total_genteng_gajidiambil }} Biji</td>
+                        <td>Rp {{ number_format($karyawan->total_gaji, 0, ',', '.') }}</td>
+                        <td>Rp {{ number_format($karyawan->total_gaji_diambil, 0, ',', '.') }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    @endforeach
     <div class="divider"></div>
     <div class="footer">
         <p>Terima kasih atas kerjasama Anda!</p>
     </div>
 </body>
-
 
 </html>

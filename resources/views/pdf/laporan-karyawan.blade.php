@@ -4,8 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Laporan Hasil Kerja {{ $karyawan->name }}</title>
-    <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;600&display=swap" rel="stylesheet">
+    <title>Laporan Hasil Kerja {{ $firstData->name }}</title>
     <style>
         body {
             font-family: 'Jost', sans-serif;
@@ -155,7 +154,7 @@
     <div class="divider"></div>
     <div class="container">
         <div class="text-center">
-            <h2>Laporan Keseluruhan {{ $karyawan->name }}</h2>
+            <h2>Laporan Keseluruhan {{ $firstData->name }}</h2>
             <p><strong>Periode: {{ $startDateFormatted }} - {{ $endDateFormatted }}</strong></p>
             <p class="text-center" style="margin-bottom: 20px">
                 <strong>Jenis Genteng:</strong> {{ $firstData->nama_jenis ?? 'Tidak Ada Data' }} |
@@ -177,10 +176,10 @@
             <tbody>
                 <tr class="total-row">
                     <td>Total</td>
-                    <td>{{ $totalPendingApproval }}</td>
-                    <td>{{ $totalBelumDibayar }}</td>
-                    <td>{{ $totalSudahDibayar }}</td>
-                    <td>{{ $totalDitolak }}</td>
+                    <td>{{ $total_pending_approval }}</td>
+                    <td>{{ $total_belum_dibayar }}</td>
+                    <td>{{ $total_sudah_dibayar }}</td>
+                    <td>{{ $total_ditolak }}</td>
                 </tr>
             </tbody>
         </table>
@@ -197,10 +196,10 @@
             </thead>
             <tbody>
                 <tr class="total-row">
-                    <td>{{ $totalGentengGajiBelumDiambil }} Biji</td>
-                    <td>{{ $totalGentengGajiSudahDiambil }} Biji</td>
-                    <td>Rp {{ number_format($totalGaji, 0, ',', '.') }}</td>
-                    <td>Rp {{ number_format($totalGajiDiambil, 0, ',', '.') }}</td>
+                    <td>{{ $total_genteng_gajiblmdiambil }} Biji</td>
+                    <td>{{ $total_genteng_gajidiambil }} Biji</td>
+                    <td>Rp {{ number_format($total_gaji, 0, ',', '.') }}</td>
+                    <td>Rp {{ number_format($total_gaji_diambil, 0, ',', '.') }}</td>
                 </tr>
             </tbody>
         </table>
@@ -219,15 +218,14 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach ($hasilKerja as $hasil)
+                @foreach ($data as $hasil) <!-- Menggunakan $data, karena query mengembalikan data ini -->
                     <tr>
                         <td>{{ \Carbon\Carbon::parse($hasil->tanggal_kerja)->translatedFormat('j F Y') }}</td>
 
                         <td>
                             {{ $hasil->jumlah_genteng }} Biji
                             @if (isset($hasil->gaji) && !is_null($hasil->gaji))
-                                <span class="text-muted ms-2">(Rp.
-                                    {{ number_format($hasil->gaji, 0, ',', '.') }})</span>
+                                <span class="text-muted ms-2">(Rp. {{ number_format($hasil->gaji, 0, ',', '.') }})</span>
                             @endif
                         </td>
                         <td>{{ $hasil->catatan }}</td>
@@ -258,6 +256,5 @@
         <p>Terima kasih atas kerjasama Anda!</p>
     </div>
 </body>
-
 
 </html>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Http\Request; // pastikan mengimpor Request class
 use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
@@ -22,6 +23,29 @@ class LoginController extends Controller
         } else {
             return '/app';
         }
+    }
+
+    /**
+     * Override the credentials check to handle failed login attempt.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return array
+     */
+    public function credentials(Request $request) // pastikan parameter menggunakan Illuminate\Http\Request
+    {
+        return $request->only($this->username(), 'password');
+    }
+
+    /**
+     * Show the login form after failed login attempt.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    protected function sendFailedLoginResponse(Request $request)
+    {
+        return redirect()->back()
+            ->withInput($request->only('email', 'remember')) // Keep the email input in the form
+            ->withErrors(['email' => 'Email atau password yang Anda masukkan salah.']);
     }
 
     /**
