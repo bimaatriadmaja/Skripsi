@@ -4,7 +4,7 @@
 
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>PG Dwi Putra - Login</title>
+    <title>Dwi Putra - Login</title>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
     <meta name="author" content="PG Dwi Putra" />
     <link rel="shortcut icon" href="{{ asset('assets/images/logo_title.png') }}">
@@ -29,7 +29,7 @@
     @stack('styles')
 </head>
 
-<h2 class="text-center pt-5">Selamat datang di PG Dwi Putra</h2>
+<h2 class="text-center pt-5">Selamat datang di Dwi Putra</h2>
 <main class="pt-10">
     <div class="mb-4 pb-4"></div>
     <section class="login-register container">
@@ -76,9 +76,14 @@
 
                         <div class="customer-option mt-4 text-center">
                             <span class="text-secondary">Belum Punya Akun?</span>
-                            <a href="{{ route('register') }}" class="btn-text js-show-register">Daftar Sekarang</a>
+                            <a href="{{ route('register') }}" class="text-primary fw-bold text-decoration-underline">Daftar Sekarang</a>
                         </div>
                     </form>
+                    <div class="customer-option mt-2 text-center">
+                        <span class="text-secondary">Lihat Genteng di </span>
+                        <a href="https://dwiputra-companyprofile.my.id/" target="_blank"
+                           class="text-primary fw-bold text-decoration-underline">Dwi Putra Profile</a>
+                    </div>                    
                 </div>
             </div>
         </div>

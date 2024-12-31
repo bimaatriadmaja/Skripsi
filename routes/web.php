@@ -33,13 +33,17 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/user/settings', [SettingsController::class, 'index'])->name('user.settings.index');
     Route::get('/user/settings/edit', [SettingsController::class, 'edit'])->name('user.settings.edit');
     Route::post('/user/settings', [SettingsController::class, 'update'])->name('user.settings.update');
-
-    // Cetak laporan 
-
 });
 
 Route::middleware(['auth', AuthAdmin::class])->group(function () {
     Route::get('/admin', [AdminController::class, 'index'])->name('admin.index');
+
+    // Laporan keseluruhan di dashboard
+    Route::get('admin/approval', [AdminController::class, 'showApproval'])->name('admin.hasil-kerja.approval');
+    Route::get('admin/belum-dibayar', [AdminController::class, 'showBelumDibayar'])->name('admin.hasil-kerja.belum-dibayar');
+    Route::get('admin/ditolak', [AdminController::class, 'showDitolak'])->name('admin.hasil-kerja.ditolak');
+    Route::get('admin/genteng', [AdminController::class, 'showGenteng'])->name('admin.hasil-kerja.genteng');
+    Route::get('admin/gaji', [AdminController::class, 'showGaji'])->name('admin.hasil-kerja.gaji');
 
     // view karyawan
     Route::get('/admin/karyawan', [AdminController::class, 'karyawan'])->name('admin.karyawan');
@@ -48,11 +52,12 @@ Route::middleware(['auth', AuthAdmin::class])->group(function () {
     Route::get('/admin/karyawan/{id}/edit', [AdminController::class, 'karyawan_edit'])->name('admin.karyawan.edit');
     Route::put('/admin/karyawan/{id}', [AdminController::class, 'karyawan_update'])->name('admin.karyawan.update');
     Route::delete('/admin/karyawan/{id}', [AdminController::class, 'karyawan_delete'])->name('admin.karyawan.delete');
-    Route::get('/admin/karyawan/{id}/check-hasil-kerja', [HasilKerjaController::class, 'checkHasilKerja'])->name('admin.karyawan.check-hasil-kerja');
 
     // view hasil kerja
+    Route::get('/admin/hasil-kerja', [AdminController::class, 'hasilkerjaSidebar'])->name('admin.hasil-kerja-sidebar');
+    Route::get('/admin/karyawan/{id}/check-hasil-kerja', [HasilKerjaController::class, 'checkHasilKerja'])->name('admin.karyawan.check-hasil-kerja');
     Route::get('/admin/hasil-kerja/{user_id}', [AdminController::class, 'hasilKerjaByKaryawan'])->name('admin.hasil-kerja.karyawan');
-// Rute untuk halaman hitung gaji
+    Route::get('/admin/hasil-kerja/{user_id}/export-pdf', [PdfExportController::class, 'exportHasilKerja'])->name('hasil-kerja-kar.export-pdf');
     Route::get('/admin/hasil-kerja/hitung-gaji/{user_id}', [AdminController::class, 'hitungGaji'])->name('admin.hasil-kerja.hitung-gaji');
     Route::post('/admin/hasil-kerja/mark-as-paid', [AdminController::class, 'markAsPaid'])->name('hasil-kerja.mark-as-paid');
     Route::get('admin/hasil-kerja/cetak-slip/{karyawanId}', [PdfExportController::class, 'cetakSlipGaji'])->name('admin.hasil-kerja.cetak-slip');
@@ -60,28 +65,21 @@ Route::middleware(['auth', AuthAdmin::class])->group(function () {
     // Update Status
     Route::get('/hasil-kerja/{id}/edit', [HasilKerjaController::class, 'edit'])->name('hasil-kerja.edit');
     Route::post('/hasil-kerja/{id}/update-status', [HasilKerjaController::class, 'updateStatus'])->name('hasil-kerja.update-status');
-    Route::get('/admin/hasil-kerja/{user_id}/export-pdf', [PdfExportController::class, 'exportHasilKerja'])->name('hasil-kerja-kar.export-pdf');
-    Route::get('admin/laporan-keseluruhan/export-pdf', [PdfExportController::class, 'exportLaporanKeseluruhan'])->name('admin.laporan-keseluruhan.export-pdf');
 
     //Setting Admin
     Route::get('/admin/settings', [SettingsController::class, 'admin_index'])->name('admin.settings.index');
     Route::get('/admin/settings/edit', [SettingsController::class, 'admin_edit'])->name('admin.settings.edit');
     Route::post('/admin/settings', [SettingsController::class, 'admin_update'])->name('admin.settings.update');
 
-    // Jenis genteng
+    // Jenis genteng & kalkulasi gaji
     Route::get('/admin/jenis-genteng', [JenisGentengController::class, 'index'])->name('admin.jenis-genteng.index');
+    Route::get('/admin/jenis-genteng/add', [JenisGentengController::class, 'jenis_genteng_add'])->name('admin.jenis-genteng.add');
     Route::post('/admin/jenis-genteng/store', [JenisGentengController::class, 'jenis_genteng_store'])->name('admin.jenis-genteng.store');
     Route::get('/admin/jenis-genteng/edit/{id}', [JenisGentengController::class, 'jenis_genteng_edit'])->name('admin.jenis-genteng.edit');
     Route::post('/admin/jenis-genteng/update/{id}', [JenisGentengController::class, 'jenis_genteng_update'])->name('admin.jenis-genteng.update');
     Route::delete('/admin/jenis-genteng/delete/{id}', [JenisGentengController::class, 'jenis_genteng_delete'])->name('admin.jenis-genteng.delete');
 
-    // View Untuk Laporan Keseluruhan
-    Route::get('admin/approval', [AdminController::class, 'showApproval'])->name('admin.hasil-kerja.approval');
-    Route::get('admin/belum-dibayar', [AdminController::class, 'showBelumDibayar'])->name('admin.hasil-kerja.belum-dibayar');
-    Route::get('admin/ditolak', [AdminController::class, 'showDitolak'])->name('admin.hasil-kerja.ditolak');
-    Route::get('admin/genteng', [AdminController::class, 'showGenteng'])->name('admin.hasil-kerja.genteng');
-    Route::get('admin/gaji', [AdminController::class, 'showGaji'])->name('admin.hasil-kerja.gaji');
-
-    // cetak laporan keseluruhan
+    // Cetak laporan keseluruhan
     Route::get('/admin/laporan/keseluruhan', [AdminController::class, 'laporan_index'])->name('admin.laporan-keseluruhan.index');
+    Route::get('admin/laporan-keseluruhan/export-pdf', [PdfExportController::class, 'exportLaporanKeseluruhan'])->name('admin.laporan-keseluruhan.export-pdf');
 });

@@ -9,7 +9,7 @@
         </div>
         <div class="main-content-wrap">
             <div class="flex items-center flex-wrap justify-between gap20 mb-27">
-                <h3>Kalkulasi Gaji</h3>
+                <h3>Besaran Gaji</h3>
                 <ul class="breadcrumbs flex items-center flex-wrap justify-start gap10">
                     <li>
                         <a href="{{ route('admin.index') }}">
@@ -20,22 +20,22 @@
                         <i class="icon-chevron-right"></i>
                     </li>
                     <li>
-                        <div class="text-tiny">Pengaturan Gaji</div>
+                        <div class="text-tiny">Besaran Gaji</div>
                     </li>
                 </ul>
             </div>
             <div class="wg-box">
+                <div class="flex items-center justify-between gap10 flex-wrap">
+                    <a class="tf-button style-1 w208" href="{{ route('admin.jenis-genteng.add') }}">
+                        <i class="icon-plus"></i>Tambah
+                    </a>
+                </div>
                 <div class="wg-table">
                     @if (session('success'))
                         <div class="alert alert-success" style="font-size: 1.5rem; padding: 20px;">
                             {{ session('success') }}
                         </div>
                     @endif
-                    @error('gaji_per_seribu')
-                        <div class="alert alert-danger" style="font-size: 1.5rem; padding: 20px;">
-                            {{ $message }}
-                        </div>
-                    @enderror
                     <div class="table-responsive">
                         <table class="table table-striped table-bordered">
                             <thead>
@@ -54,7 +54,6 @@
                                         <td>Rp {{ number_format($jenis->gaji_per_seribu, 0, ',', '.') }}</td>
                                         <td>
                                             <div class="list-icon-function">
-                                                {{-- {{ route('admin.jenis-genteng.edit', ['id' => $jenis->id]) }} --}}
                                                 <a href="{{ route('admin.jenis-genteng.edit', ['id' => $jenis->id]) }}">
                                                     <div class="item edit">
                                                         <i class="icon-edit-3"></i>
@@ -82,27 +81,6 @@
                     </div>
                 </div>
             </div>
-            <div class="wg-box mt-5">
-                <div class="flex items-center justify-between gap10 flex-wrap mb-4">
-                    <h4>Tambah Jenis Genteng & Gaji</h4>
-                </div>
-                <form action="{{ route('admin.jenis-genteng.store') }}" method="POST">
-                    @csrf
-                    <div class="mb-5">
-                        <label for="nama_jenis" class="form-label"
-                            style="font-size: 1.2rem; font-weight: bold; margin-bottom: 0.7rem;">Nama Jenis</label>
-                        <input type="text" class="form-control" id="nama_jenis" name="nama_jenis" required
-                            style="font-size: 1.2rem; font-weight: bold; padding: 0.75rem;">
-                    </div>
-                    <div class="mt-5">
-                        <label for="gaji_per_seribu" class="form-label"
-                            style="font-size: 1.2rem; font-weight: bold; margin-bottom: 0.7rem;">Gaji per Seribu</label>
-                        <input type="number" class="form-control" id="gaji_per_seribu" name="gaji_per_seribu" required
-                            style="font-size: 1.2rem; font-weight: bold; padding: 0.75rem;">
-                    </div>
-                    <button type="submit" class="btn btn-primary tf-button style-1 w208 mt-5">Tambah</button>
-                </form>
-            </div>
         </div>
     </div>
 @endsection
@@ -127,4 +105,15 @@
             });
         });
     </script>
+    @if (session('success'))
+    <script>
+        Swal.fire({
+            title: '<span style="font-size: 24px;">Sukses</span>', 
+            html: '<span style="font-size: 15px;">{{ session('success') }}</span>', 
+            icon: 'success',
+            confirmButtonText: 'OK',
+            confirmButtonColor: '#28a745'
+        });
+    </script>
+@endif
 @endpush

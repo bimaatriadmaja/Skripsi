@@ -27,54 +27,43 @@
             <div class="wg-box">
                 <div class="flex items-center justify-between gap-10 flex-wrap">
                     <div class="wg-filter flex-grow">
-                        <form class="d-flex flex-wrap gap-2" action="{{ route('admin.laporan-keseluruhan.index') }}" method="GET">
+                        <form class="d-flex flex-wrap gap-2" action="{{ route('admin.laporan-keseluruhan.index') }}"
+                            method="GET">
                             <div class="d-flex gap-3 mb-2 w-100">
-                                <!-- Filter Mulai -->
                                 <div class="flex-grow-1">
-                                    <label for="start_date" class="form-label" style="font-size: 1.5em; font-weight: 600;">Filter Mulai:</label>
-                                    <input type="date" id="start_date" class="form-control" name="start_date" value="{{ request('start_date') }}">
+                                    <label for="start_date" class="form-label"
+                                        style="font-size: 1.5em; font-weight: 600;">Filter Mulai:</label>
+                                    <input type="date" id="start_date" class="form-control" name="start_date"
+                                        value="{{ request('start_date') }}">
                                 </div>
-                                <!-- Sampai Dengan -->
                                 <div class="flex-grow-1">
-                                    <label for="end_date" class="form-label" style="font-size: 1.5em; font-weight: 600;">Sampai Dengan:</label>
-                                    <input type="date" id="end_date" class="form-control" name="end_date" value="{{ request('end_date') }}">
+                                    <label for="end_date" class="form-label"
+                                        style="font-size: 1.5em; font-weight: 600;">Sampai Dengan:</label>
+                                    <input type="date" id="end_date" class="form-control" name="end_date"
+                                        value="{{ request('end_date') }}">
                                 </div>
                             </div>
-                
-                            <!-- Tombol Filter -->
                             <div class="d-flex gap-2 w-100">
-                                <button class="btn w-100 fs-5 text-white" type="submit" style="background-color: #007bff; border-radius: 10px; font-size: 1.1em; padding: 10px 20px;">
+                                <button class="btn w-100 fs-5 text-white" type="submit"
+                                    style="background-color: #007bff; border-radius: 10px; font-size: 1.1em; padding: 10px 20px;">
                                     <i class="bi bi-filter"></i> Filter
                                 </button>
                             </div>
                         </form>
-                
-                        <!-- Action Buttons -->
                         <div class="d-flex gap-3 mt-3 w-100">
-                            <!-- Clear Filter Button -->
-                            <a href="{{ route('admin.laporan-keseluruhan.index') }}" class="btn w-100 fs-5 d-flex align-items-center justify-content-center"
+                            <a href="{{ route('admin.laporan-keseluruhan.index') }}"
+                                class="btn w-100 fs-5 d-flex align-items-center justify-content-center"
                                 style="background-color: #6c757d; color: #ffffff; border-radius: 10px; font-size: 1.1em; padding: 10px 20px;">
                                 <i class="bi bi-x-circle me-2"></i> Bersihkan
                             </a>
-                
-                            <!-- Export PDF Button -->
-                            @if (request()->input('start_date') && request()->input('end_date'))
-                                <a href="{{ route('admin.laporan-keseluruhan.export-pdf') }}?start_date={{ request('start_date') }}&end_date={{ request('end_date') }}"
-                                    class="btn btn-success w-100 d-flex align-items-center justify-content-center"
-                                    style="font-size: 1.2em; border-radius: 10px; padding: 10px 20px;">
-                                    <i class="bi bi-file-earmark-pdf me-2"></i> Export PDF
-                                </a>
-                            @else
-                                <button class="btn btn-success w-100 d-flex align-items-center justify-content-center"
-                                    style="font-size: 1.2em; border-radius: 10px; padding: 10px 20px;" disabled>
-                                    Export PDF
-                                </button>
-                            @endif
+                            <a href="{{ route('admin.laporan-keseluruhan.export-pdf') }}?start_date={{ request('start_date') }}&end_date={{ request('end_date') }}"
+                                class="btn btn-success w-100 d-flex align-items-center justify-content-center"
+                                style="font-size: 1.2em; border-radius: 10px; padding: 10px 20px;" id="export-pdf-btn-2">
+                                <i class="bi bi-file-earmark-pdf me-2"></i> Export PDF
+                            </a>
                         </div>
                     </div>
                 </div>
-                
-
                 <div class="wg-table">
                     @if (session('success'))
                         <div class="alert alert-success" style="font-size: 1.5rem; padding: 20px;">
@@ -219,15 +208,33 @@
     </div>
 @endsection
 @push('scripts')
-<script>
-    @if (session('error'))
+    <script>
+        @if (session('error'))
             console.log('Session Error:', '{{ session('error') }}');
             Swal.fire({
-                title: 'Gagal!',
-                text: '{{ session('error') }}',
+                title: '<span style="font-size: 24px;">Gagal!</span>',
+                html: '<span style="font-size: 15px;">' + @json(session('error')) + '</span>',
                 icon: 'error',
                 confirmButtonText: 'OK',
+                confirmButtonColor: '#dc3545'
             });
         @endif
-</script>
+
+        document.getElementById('export-pdf-btn-2').addEventListener('click', function(e) {
+            // Cek apakah filter start_date dan end_date ada
+            var startDate = new URLSearchParams(window.location.search).get('start_date');
+            var endDate = new URLSearchParams(window.location.search).get('end_date');
+
+            if (!startDate || !endDate) {
+                // Jika tidak ada filter, tampilkan SweetAlert error
+                e.preventDefault(); // Menghentikan pengiriman request
+                Swal.fire({
+                    icon: 'error',
+                    title: '<span style="font-size: 24px;">Gagal!</span>',
+                    html: '<span style="font-size: 15px;">Filter terlebih dahulu untuk mencetak laporan.</span>',
+                    confirmButtonColor: '#dc3545',
+                });
+            }
+        });
+    </script>
 @endpush

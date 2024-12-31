@@ -228,6 +228,8 @@
                             @if (isset($hasil->gaji) && !is_null($hasil->gaji))
                                 <span class="text-muted ms-2">(Rp.
                                     {{ number_format($hasil->gaji, 0, ',', '.') }})</span>
+                            @else
+                                <span class="text-muted ms-2">(-)</span>
                             @endif
                         </td>
                         <td>{{ $hasil->catatan }}</td>

@@ -47,7 +47,7 @@ class HasilKerjaController extends Controller
         $hasResults = HasilKerja::where('user_id', $user_id)->exists();
 
         if (!$hasResults) {
-            return redirect()->route('admin.karyawan')->with('error', 'Belum ada hasil kerja yang ditambahkan oleh karyawan ' . $karyawan->name);
+            return redirect()->route('admin.hasil-kerja-sidebar')->with('error', 'Belum ada hasil kerja yang ditambahkan oleh karyawan ' . $karyawan->name);
         }
 
         return redirect()->route('admin.hasil-kerja.karyawan', $user_id);

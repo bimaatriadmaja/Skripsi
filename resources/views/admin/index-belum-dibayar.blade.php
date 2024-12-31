@@ -8,17 +8,17 @@
             </a>
         </div>
         <div class="main-content-wrap">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h3 class="mb-0">Hasil Kerja Belum Dibayar</h3>
-                <ul class="breadcrumbs d-flex align-items-center gap-2 mb-0">
+            <div class="flex items-center flex-wrap justify-between gap20 mb-27">
+                <h3>Hasil Kerja Belum Diambil</h3>
+                <ul class="breadcrumbs flex items-center flex-wrap justify-start gap10">
                     <li>
-                        <a href="{{ route('admin.index') }}" class="text-muted">
+                        <a href="{{ route('admin.index') }}">
                             <div class="text-tiny">Dashboard</div>
                         </a>
                     </li>
-                    <li><i class="bi bi-chevron-right"></i></li>
+                    <li><i class="icon-chevron-right"></i></li>
                     <li>
-                        <div class="text-tiny">Hasil Kerja Belum Dibayar</div>
+                        <div class="text-tiny">Hasil Kerja Belum Diambil</div>
                     </li>
                 </ul>
             </div>
@@ -26,9 +26,10 @@
                 @if ($karyawans->isEmpty())
                     <div class="text-center py-5">
                         <img src="{{ asset('assets/images/pay.png') }}" alt="Pay Icon">
-                        <h4 style="font-size: 1.5rem; font-weight: bold; color: #6c757d;">Tidak ada hasil kerja disetujui yang belum
-                            dibayar</h4>
-                        <p style="font-size: 1.1rem; color: #6c757d;">Semua hasil kerja telah dibayar.</p>
+                        <h4 style="font-size: 1.5rem; font-weight: bold; color: #6c757d;">Tidak ada hasil kerja disetujui
+                            yang belum
+                            diambil</h4>
+                        <p style="font-size: 1.1rem; color: #6c757d;">Semua hasil kerja telah diambil.</p>
                     </div>
                 @else
                     <div class="row">
@@ -45,7 +46,7 @@
                                                 <h5 class="card-title mb-1" style="font-size: 1.3rem; font-weight: bold;">
                                                     {{ $karyawan->karyawan_name }}</h5>
                                                 <p class="card-text text-muted mb-0" style="font-size: 1.1rem;">Jumlah Belum
-                                                    Dibayar:</p>
+                                                    Diambil:</p>
                                                 <p class="card-text mb-0" style="font-size: 1.2rem; font-weight: bold;">
                                                     {{ $karyawan->jumlah_belum_dibayar }}</p>
                                             </div>
@@ -53,7 +54,8 @@
                                         <div class="text-center mt-3">
                                             <a href="{{ route('admin.hasil-kerja.karyawan', $karyawan->id) }}"
                                                 class="btn btn-primary w-100"
-                                                style="padding: 12px; font-size: 1.1rem;">Lihat Detail</a>
+                                                style="padding: 12px; border-radius: 15px; font-size: 1.1rem;">Lihat
+                                                Detail</a>
                                         </div>
                                     </div>
                                 </div>

@@ -8,17 +8,17 @@
             </a>
         </div>
         <div class="main-content-wrap">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h3 class="mb-0">Gaji yang Bisa Diambil</h3>
-                <ul class="breadcrumbs d-flex align-items-center gap-2 mb-0">
+            <div class="flex items-center flex-wrap justify-between gap20 mb-27">
+                <h3>Gaji Yang Bisa Diambil</h3>
+                <ul class="breadcrumbs flex items-center flex-wrap justify-start gap10">
                     <li>
-                        <a href="{{ route('admin.index') }}" class="text-muted">
+                        <a href="{{ route('admin.index') }}">
                             <div class="text-tiny">Dashboard</div>
                         </a>
                     </li>
-                    <li><i class="bi bi-chevron-right"></i></li>
+                    <li><i class="icon-chevron-right"></i></li>
                     <li>
-                        <div class="text-tiny">Gaji yang Bisa Diambil</div>
+                        <div class="text-tiny">Gaji Yang Bisa Diambil</div>
                     </li>
                 </ul>
             </div>
@@ -28,7 +28,7 @@
                         <img src="{{ asset('assets/images/money.png') }}" alt="Money Icon">
                         <h4 style="font-size: 1.5rem; font-weight: bold; color: #6c757d;">Tidak ada gaji yang bisa diambil
                         </h4>
-                        <p style="font-size: 1.1rem; color: #6c757d;">Semua gaji karyawan sudah terbayar.</p>
+                        <p style="font-size: 1.1rem; color: #6c757d;">Semua gaji karyawan sudah diambil.</p>
                     </div>
                 @else
                     <div class="row">
@@ -53,7 +53,7 @@
                                         <div class="text-center mt-3">
                                             <a href="{{ route('admin.hasil-kerja.karyawan', $karyawan->id) }}"
                                                 class="btn btn-primary w-100"
-                                                style="padding: 12px; font-size: 1.1rem;">Lihat Detail</a>
+                                                style="padding: 12px; border-radius: 15px; font-size: 1.1rem;">Lihat Detail</a>
                                         </div>
                                     </div>
                                 </div>

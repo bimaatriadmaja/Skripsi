@@ -36,31 +36,37 @@
                 <form action="{{ route('admin.karyawan.update', $karyawan->id) }}" method="POST">
                     @csrf
                     @method('PUT')
-                    @if ($errors->any())
-                        <div class="alert alert-danger" style="font-size: 1.5rem; padding: 20px;">
-                            <ul>
-                                @foreach ($errors->all() as $error)
-                                    <li>{{ $error }}</li>
-                                @endforeach
-                            </ul>
-                        </div>
-                    @endif
                     <div class="form-group">
                         <label for="name" class="form-label">Nama</label>
                         <input type="text" name="name" id="name" class="form-control"
-                            value="{{ old('name', $karyawan->name) }}" required>
+                            value="{{ old('name', $karyawan->name) }}">
+                            @error('name')
+                        <div class="alert alert-danger" style="font-size: 1.5rem; padding: 20px;">
+                            {{ $message }}
+                        </div>
+                    @enderror
                     </div>
                     <div class="form-group pt-3">
                         <label for="email" class="form-label">Email</label>
                         <input type="email" name="email" id="email" class="form-control"
-                            value="{{ old('email', $karyawan->email) }}" required>
+                            value="{{ old('email', $karyawan->email) }}">
+                            @error('email')
+                        <div class="alert alert-danger" style="font-size: 1.5rem; padding: 20px;">
+                            {{ $message }}
+                        </div>
+                    @enderror
                     </div>
                     <div class="form-group pt-3">
                         <label for="mobile" class="form-label">Nomor HP</label>
                         <input type="text" name="mobile" id="mobile"
                             class="form-control @error('mobile') is-invalid @enderror"
-                            value="{{ old('mobile', $karyawan->mobile) }}" required maxlength="15" pattern="\d*"
+                            value="{{ old('mobile', $karyawan->mobile) }}" maxlength="15" pattern="\d*"
                             oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                            @error('mobile')
+                        <div class="alert alert-danger" style="font-size: 1.5rem; padding: 20px;">
+                            {{ $message }}
+                        </div>
+                    @enderror
                     </div>
                     <div class="form-group pt-3">
                         <label for="jenis_genteng_id" class="form-label">Jenis Genteng</label>
@@ -78,11 +84,23 @@
                     <div class="form-group pt-3">
                         <label for="password" class="form-label">Password Baru</label>
                         <input type="password" name="password" id="password" class="form-control">
+                        @error('password')
+                            <div class="alert alert-danger" style="font-size: 1.5rem; padding: 20px;">
+                                {{ $message }}
+                            </div>
+                        @enderror
                     </div>
+                    
                     <div class="form-group pt-3">
                         <label for="password_confirmation" class="form-label">Konfirmasi Password Baru</label>
                         <input type="password" name="password_confirmation" id="password_confirmation" class="form-control">
+                        @error('password_confirmation')
+                            <div class="alert alert-danger" style="font-size: 1.5rem; padding: 20px;">
+                                {{ $message }}
+                            </div>
+                        @enderror
                     </div>
+                    
                     <button type="submit" class="btn btn-primary tf-button style-1 w208">Perbarui</button>
                 </form>
             </div>
@@ -113,3 +131,34 @@
         }
     </style>
 @endpush
+@push('scripts')
+    <script>
+        @if ($errors->any())
+            let errorMessage = '';
+            @foreach ($errors->get('name') as $error)
+                errorMessage += '<strong>Nama:</strong> {{ $error }}<br>';
+            @endforeach
+            @foreach ($errors->get('email') as $error)
+                errorMessage += '<strong>Email:</strong> {{ $error }}<br>';
+            @endforeach
+            @foreach ($errors->get('mobile') as $error)
+                errorMessage += '<strong>Nomor HP:</strong> {{ $error }}<br>';
+            @endforeach
+            @foreach ($errors->get('password') as $error)
+                errorMessage += '<strong>Password:</strong> {{ $error }}<br>';
+            @endforeach
+            @foreach ($errors->get('password_confirmation') as $error)
+                errorMessage += '<strong>Konfirmasi Password:</strong> {{ $error }}<br>';
+            @endforeach
+
+            Swal.fire({
+                title: '<span style="font-size: 24px;">Gagal!</span>',
+                html: '<span style="font-size: 15px;">' + errorMessage + '</span>', 
+                icon: 'error',
+                confirmButtonText: 'OK',
+                confirmButtonColor: '#dc3545', 
+            });
+        @endif
+    </script>
+@endpush
+

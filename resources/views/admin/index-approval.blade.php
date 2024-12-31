@@ -8,15 +8,15 @@
             </a>
         </div>
         <div class="main-content-wrap">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h3 class="mb-0">Hasil Kerja Menunggu Approval</h3>
-                <ul class="breadcrumbs d-flex align-items-center gap-2 mb-0">
+            <div class="flex items-center flex-wrap justify-between gap20 mb-27">
+                <h3>Hasil Kerja Menunggu Approval</h3>
+                <ul class="breadcrumbs flex items-center flex-wrap justify-start gap10">
                     <li>
-                        <a href="{{ route('admin.index') }}" class="text-muted">
+                        <a href="{{ route('admin.index') }}">
                             <div class="text-tiny">Dashboard</div>
                         </a>
                     </li>
-                    <li><i class="bi bi-chevron-right"></i></li>
+                    <li><i class="icon-chevron-right"></i></li>
                     <li>
                         <div class="text-tiny">Hasil Kerja Menunggu Approval</div>
                     </li>
@@ -53,7 +53,8 @@
                                         <div class="text-center mt-3">
                                             <a href="{{ route('admin.hasil-kerja.karyawan', $karyawan->id) }}"
                                                 class="btn btn-primary w-100"
-                                                style="padding: 12px; font-size: 1.1rem;">Lihat Detail</a>
+                                                style="padding: 12px; border-radius: 15px; font-size: 1.1rem;">Lihat
+                                                Detail</a>
                                         </div>
                                     </div>
                                 </div>

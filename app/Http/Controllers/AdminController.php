@@ -29,7 +29,7 @@ class AdminController extends Controller
                 DB::raw('SUM(CASE WHEN hk.status = "approved" AND hk.payment_status = "unpaid" THEN hk.jumlah_genteng ELSE 0 END) as total_genteng_disetujui'),
                 DB::raw('SUM(CASE WHEN hk.status = "approved" AND hk.payment_status = "unpaid" THEN hk.jumlah_genteng * jg.gaji_per_seribu / 1000 ELSE 0 END) as total_gaji')
             )
-            ->groupBy('users.id')
+            ->groupBy('users.id', 'users.name')
             ->get();
 
         $total_pending_approval = $data->sum('jumlah_pending_approval');
@@ -46,7 +46,7 @@ class AdminController extends Controller
         $karyawans = User::where('utype', 'USR')
             ->leftJoin('hasil_kerja as hk', 'users.id', '=', 'hk.user_id')
             ->select('users.id', 'users.name as karyawan_name', DB::raw('COUNT(CASE WHEN hk.status = "pending" THEN 1 END) as jumlah_pending_approval'))
-            ->groupBy('users.id')
+            ->groupBy('users.id', 'users.name')
             ->having('jumlah_pending_approval', '>', 0)
             ->get();
 
@@ -58,7 +58,7 @@ class AdminController extends Controller
         $karyawans = User::where('utype', 'USR')
             ->leftJoin('hasil_kerja as hk', 'users.id', '=', 'hk.user_id')
             ->select('users.id', 'users.name as karyawan_name', DB::raw('COUNT(CASE WHEN hk.payment_status = "unpaid" AND hk.status = "approved" THEN 1 END) as jumlah_belum_dibayar'))
-            ->groupBy('users.id')
+            ->groupBy('users.id', 'users.name')
             ->having('jumlah_belum_dibayar', '>', 0)
             ->get();
 
@@ -70,7 +70,7 @@ class AdminController extends Controller
         $karyawans = User::where('utype', 'USR')
             ->leftJoin('hasil_kerja as hk', 'users.id', '=', 'hk.user_id')
             ->select('users.id', 'users.name as karyawan_name', DB::raw('COUNT(CASE WHEN hk.status = "rejected" THEN 1 END) as jumlah_ditolak'))
-            ->groupBy('users.id')
+            ->groupBy('users.id', 'users.name')
             ->having('jumlah_ditolak', '>', 0)
             ->get();
 
@@ -88,7 +88,7 @@ class AdminController extends Controller
                 DB::raw('SUM(CASE WHEN hk.status = "approved" AND hk.payment_status = "unpaid" THEN hk.jumlah_genteng ELSE 0 END) as total_genteng_disetujui'),
                 DB::raw('SUM(CASE WHEN hk.status = "approved" AND hk.payment_status = "unpaid" THEN hk.jumlah_genteng * jg.gaji_per_seribu / 1000 ELSE 0 END) as total_gaji')
             )
-            ->groupBy('users.id')
+            ->groupBy('users.id', 'users.name')
             ->having('total_genteng_disetujui', '>', 0)
             ->get();
 
@@ -106,7 +106,7 @@ class AdminController extends Controller
                 'users.name as karyawan_name',
                 DB::raw('SUM(CASE WHEN hk.status = "approved" AND hk.payment_status = "unpaid" THEN hk.jumlah_genteng * jg.gaji_per_seribu / 1000 ELSE 0 END) as total_gaji')
             )
-            ->groupBy('users.id')
+            ->groupBy('users.id', 'users.name')
             ->having('total_gaji', '>', 0)
             ->get();
 
@@ -179,11 +179,13 @@ class AdminController extends Controller
 
     public function karyawan_update(Request $request, $id)
     {
+        // Validasi data yang diterima dari form
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $id,
             'mobile' => 'required|numeric|digits_between:10,15|unique:users,mobile,' . $id,
             'password' => 'nullable|confirmed|min:8',
+            'password_confirmation' => 'nullable|same:password',
         ], [
             'name.required' => 'Nama harus diisi.',
             'email.required' => 'Email harus diisi.',
@@ -192,9 +194,21 @@ class AdminController extends Controller
             'mobile.required' => 'Nomor HP harus diisi.',
             'mobile.unique' => 'Nomor HP sudah terdaftar untuk pengguna lain.',
             'mobile.digits_between' => 'Nomor HP harus memiliki panjang antara 10 hingga 15 karakter.',
-            'password.confirmed' => 'Konfirmasi kata sandi tidak cocok.',
             'password.min' => 'Kata sandi minimal harus 8 karakter.',
+            'password_confirmation.same' => 'Password konfirmasi tidak cocok.',
         ]);
+
+        if ($request->filled('password') && !$request->filled('password_confirmation')) {
+            $validator->after(function ($validator) {
+                $validator->errors()->add('password_confirmation', 'Konfirmasi kata sandi harus diisi.');
+            });
+        }
+
+        if (!$request->filled('password') && $request->filled('password_confirmation')) {
+            $validator->after(function ($validator) {
+                $validator->errors()->add('password', 'Kata sandi harus diisi dulu sebelum konfirmasi.');
+            });
+        }
 
         if ($validator->fails()) {
             return redirect()->route('admin.karyawan.edit', $id)
@@ -216,7 +230,6 @@ class AdminController extends Controller
         } else {
             $karyawan->jenis_genteng_id = null;
         }
-
         $karyawan->save();
 
         return redirect()->route('admin.karyawan')
@@ -231,157 +244,15 @@ class AdminController extends Controller
         return redirect()->route('admin.karyawan')->with('success', 'Karyawan berhasil dihapus.');
     }
 
-    // revisi kedua
-    // public function hasilKerjaByKaryawan(Request $request, $karyawanId)
-    // {
-    //     // Ambil data karyawan
-    //     $karyawan = User::findOrFail($karyawanId);
+    // sidebar hasil kerja
+    public function hasilkerjaSidebar()
+    {
+        $karyawan = User::where('utype', 'USR')->with('jenis_genteng')->paginate(6);
+        $jenisGenteng = JenisGenteng::all();
 
-    //     // Ambil input dari form filter
-    //     $startDate = $request->input('start_date');
-    //     $endDate = $request->input('end_date');
+        return view('admin.data-hasil-kerja', compact('karyawan', 'jenisGenteng'));
+    }
 
-    //     // Validasi tanggal (tanggal mulai dan tanggal akhir tidak boleh lebih dari hari ini)
-    //     $today = date('Y-m-d');
-    //     if ($startDate && strtotime($startDate) > strtotime($today)) {
-    //         return redirect()->back()->with('error', 'Tanggal mulai tidak boleh lebih dari hari ini');
-    //     }
-
-    //     if ($endDate && strtotime($endDate) > strtotime($today)) {
-    //         return redirect()->back()->with('error', 'Tanggal akhir tidak boleh lebih dari hari ini');
-    //     }
-
-    //     if ($startDate && $endDate && strtotime($startDate) > strtotime($endDate)) {
-    //         return redirect()->back()->with('error', 'Tanggal mulai tidak boleh lebih besar dari tanggal akhir');
-    //     }
-
-    //     // Query untuk filter berdasarkan hasil kerja
-    //     $query = HasilKerja::where('user_id', $karyawan->id);
-
-    //     // Filter berdasarkan tanggal
-    //     if ($startDate && $endDate) {
-    //         $query->whereBetween('tanggal_kerja', [date('Y-m-d', strtotime($startDate)), date('Y-m-d', strtotime($endDate))]);
-    //     } elseif ($startDate) {
-    //         $query->where('tanggal_kerja', '>=', date('Y-m-d', strtotime($startDate)));
-    //     } elseif ($endDate) {
-    //         $query->where('tanggal_kerja', '<=', date('Y-m-d', strtotime($endDate)));
-    //     }
-
-    //     // Ambil hasil kerja dengan pagination dan tambahkan filter ke URL pagination
-    //     $hasilKerja = $query->orderBy('tanggal_kerja', 'desc')->paginate(5);
-
-    //     // Menambahkan parameter filter ke URL pagination
-    //     $hasilKerja->appends([
-    //         'start_date' => $startDate,
-    //         'end_date' => $endDate,
-    //     ]);
-
-    //     // Hitung total untuk seluruh data yang sudah difilter
-    //     $totalGenteng = 0;
-    //     $totalGajiPaid = 0;
-    //     $totalGajiUnpaid = 0;
-    //     $total_pending_approval = 0;
-    //     $total_belum_dibayar = 0;
-    //     $total_sudah_dibayar = 0;
-    //     $total_ditolak = 0;
-    //     $total_genteng_gajiblmdiambil = 0;
-    //     $total_genteng_gajidiambil = 0;
-    //     $total_gaji = 0;
-    //     $total_gaji_diambil = 0;
-
-    //     foreach ($hasilKerja as $hasil) {
-    //         $jenisGenteng = $hasil->user->jenis_genteng;
-    //         if ($jenisGenteng) {
-    //             $gaji = $jenisGenteng->gaji_per_seribu * ($hasil->jumlah_genteng / 1000);
-    //             $hasil->gaji = $gaji;
-
-    //             if ($hasil->status == 'approved') {
-    //                 $totalGenteng += $hasil->jumlah_genteng;
-
-    //                 if ($hasil->payment_status === 'paid') {
-    //                     $totalGajiPaid += $gaji;
-    //                     $total_gaji_diambil += $gaji;
-    //                     $total_genteng_gajidiambil += $hasil->jumlah_genteng;
-    //                 }
-
-    //                 if ($hasil->payment_status === 'unpaid') {
-    //                     $totalGajiUnpaid += $gaji;
-    //                     $total_gaji += $gaji;
-    //                     $total_genteng_gajiblmdiambil += $hasil->jumlah_genteng;
-    //                 }
-    //             }
-
-    //             // Hitung total berdasarkan status
-    //             if ($hasil->status == 'pending') {
-    //                 $total_pending_approval++;
-    //             } elseif ($hasil->status == 'rejected') {
-    //                 $total_ditolak++;
-    //             } elseif ($hasil->payment_status == 'unpaid') {
-    //                 $total_belum_dibayar++;
-    //             } elseif ($hasil->payment_status == 'paid') {
-    //                 $total_sudah_dibayar++;
-    //             }
-    //         } else {
-    //             $hasil->gaji = 0;
-    //         }
-    //     }
-
-    //     // Data untuk laporan keseluruhan karyawan
-    //     $laporanData = User::where('users.id', $karyawan->id)
-    //         ->leftJoin('hasil_kerja as hk', 'users.id', '=', 'hk.user_id')
-    //         ->leftJoin('jenis_genteng as jg', 'users.jenis_genteng_id', '=', 'jg.id')
-    //         ->select(
-    //             'jg.nama_jenis',
-    //             'jg.gaji_per_seribu',
-    //             DB::raw('COUNT(CASE WHEN hk.status = "pending" THEN 1 END) as jumlah_pending_approval'),
-    //             DB::raw('COUNT(CASE WHEN hk.status = "approved" AND hk.payment_status = "unpaid" THEN 1 END) as jumlah_belum_dibayar'),
-    //             DB::raw('COUNT(CASE WHEN hk.status = "approved" AND hk.payment_status = "paid" THEN 1 END) as jumlah_sudah_dibayar'),
-    //             DB::raw('COUNT(CASE WHEN hk.status = "rejected" THEN 1 END) as jumlah_ditolak'),
-    //             DB::raw('SUM(CASE WHEN hk.status = "approved" AND hk.payment_status = "unpaid" THEN hk.jumlah_genteng ELSE 0 END) as total_genteng_gajiblmdiambil'),
-    //             DB::raw('SUM(CASE WHEN hk.status = "approved" AND hk.payment_status = "paid" THEN hk.jumlah_genteng ELSE 0 END) as total_genteng_gajidiambil'),
-    //             DB::raw('SUM(CASE WHEN hk.status = "approved" AND hk.payment_status = "unpaid" THEN hk.jumlah_genteng * jg.gaji_per_seribu / 1000 ELSE 0 END) as total_gaji'),
-    //             DB::raw('SUM(CASE WHEN hk.status = "approved" AND hk.payment_status = "paid" THEN hk.jumlah_genteng * jg.gaji_per_seribu / 1000 ELSE 0 END) as total_gaji_diambil')
-    //         )
-    //         ->groupBy('users.id', 'jg.nama_jenis', 'jg.gaji_per_seribu');
-
-    //     // Jika ada filter tanggal, terapkan pada laporan karyawan
-    //     if ($startDate && $endDate) {
-    //         $laporanData->whereBetween('hk.tanggal_kerja', [$startDate, $endDate]);
-    //     } elseif ($startDate) {
-    //         $laporanData->where('hk.tanggal_kerja', '>=', $startDate);
-    //     } elseif ($endDate) {
-    //         $laporanData->where('hk.tanggal_kerja', '<=', $endDate);
-    //     }
-
-    //     $laporan = $laporanData->get();
-
-    //     // Total data untuk laporan karyawan
-    //     $total_pending_approval = $laporan->sum('jumlah_pending_approval');
-    //     $total_belum_dibayar = $laporan->sum('jumlah_belum_dibayar');
-    //     $total_sudah_dibayar = $laporan->sum('jumlah_sudah_dibayar');
-    //     $total_ditolak = $laporan->sum('jumlah_ditolak');
-    //     $total_genteng_gajiblmdiambil = $laporan->sum('total_genteng_gajiblmdiambil');
-    //     $total_genteng_gajidiambil = $laporan->sum('total_genteng_gajidiambil');
-    //     $total_gaji = $laporan->sum('total_gaji');
-    //     $total_gaji_diambil = $laporan->sum('total_gaji_diambil');
-
-    //     // Kirim data ke view
-    //     return view('admin.hasil-kerja-kar', compact(
-    //         'karyawan',
-    //         'hasilKerja',
-    //         'total_pending_approval',
-    //         'total_belum_dibayar',
-    //         'total_sudah_dibayar',
-    //         'total_ditolak',
-    //         'total_genteng_gajiblmdiambil',
-    //         'total_genteng_gajidiambil',
-    //         'total_gaji',
-    //         'total_gaji_diambil',
-    //         'startDate',
-    //         'endDate',
-    //         'laporan' // Sertakan laporan
-    //     ));
-    // }
     public function hasilKerjaByKaryawan(Request $request, $karyawanId)
     {
         // Ambil data karyawan
@@ -535,66 +406,10 @@ class AdminController extends Controller
             'total_gaji_diambil',
             'startDate',
             'endDate',
-            'laporan' // Sertakan laporan
+            'laporan'
         ));
     }
 
-    // public function hitungGaji(Request $request, $karyawanId)
-    // {
-    //     $bulanIndo = [
-    //         'Januari',
-    //         'Februari',
-    //         'Maret',
-    //         'April',
-    //         'Mei',
-    //         'Juni',
-    //         'Juli',
-    //         'Agustus',
-    //         'September',
-    //         'Oktober',
-    //         'November',
-    //         'Desember'
-    //     ];
-
-    //     $karyawan = User::findOrFail($karyawanId);
-    //     $jenisGenteng = $karyawan->jenis_genteng;
-    //     $gajiPerSeribu = $jenisGenteng ? $jenisGenteng->gaji_per_seribu : 0;
-    //     $hasilKerja = DB::table('hasil_kerja')
-    //         ->where('user_id', $karyawanId)
-    //         ->where('status', 'approved')
-    //         ->where('payment_status', 'unpaid')
-    //         ->get();
-
-    //     if ($hasilKerja->isEmpty()) {
-    //         return response()->json([
-    //             'error' => 'Tidak ada data yang sesuai dengan kriteria'
-    //         ], 400);
-    //     }
-
-    //     $startDate = Carbon::parse($hasilKerja->min('tanggal_kerja'));
-    //     $endDate = Carbon::parse($hasilKerja->max('tanggal_kerja'));
-
-    //     $startDay = $startDate->day;
-    //     $startMonth = $bulanIndo[$startDate->month - 1];
-    //     $startYear = $startDate->year;
-
-    //     $endDay = $endDate->day;
-    //     $endMonth = $bulanIndo[$endDate->month - 1];
-    //     $endYear = $endDate->year;
-
-    //     $periode = $startDay . ' ' . $startMonth . ' ' . $startYear . ' - ' . $endDay . ' ' . $endMonth . ' ' . $endYear;
-
-    //     $totalGenteng = $hasilKerja->sum('jumlah_genteng');
-    //     $totalGaji = ($totalGenteng / 1000) * $gajiPerSeribu;
-
-    //     return response()->json([
-    //         'jenisGenteng' => $jenisGenteng ? $jenisGenteng->nama_jenis : 'Tidak Diketahui',
-    //         'gajiPerSeribu' => number_format($gajiPerSeribu, 0, ',', '.'),
-    //         'totalGenteng' => number_format($totalGenteng, 0, ',', '.'),
-    //         'totalGaji' => 'Rp ' . number_format($totalGaji, 0, ',', '.'),
-    //         'periode' => $periode,
-    //     ]);
-    // }
     public function hitungGaji(Request $request, $karyawanId)
     {
         $bulanIndo = [
@@ -615,6 +430,13 @@ class AdminController extends Controller
         $karyawan = User::findOrFail($karyawanId);
         $jenisGenteng = $karyawan->jenis_genteng;
         $gajiPerSeribu = $jenisGenteng ? $jenisGenteng->gaji_per_seribu : 0;
+
+        // Cek apakah jenis genteng dan gaji per seribu ada
+        if (!$jenisGenteng || !$gajiPerSeribu) {
+            return response()->json([
+                'error' => 'Jenis genteng dan gaji per seribu belum ditentukan'
+            ], 400);
+        }
         $hasilKerja = DB::table('hasil_kerja')
             ->where('user_id', $karyawanId)
             ->where('status', 'approved')
@@ -623,7 +445,7 @@ class AdminController extends Controller
 
         if ($hasilKerja->isEmpty()) {
             return response()->json([
-                'error' => 'Tidak ada data yang sesuai dengan kriteria'
+                'error' => 'Tidak ada data yang sudah disetujui & belum diambil gajinya'
             ], 400);
         }
 
@@ -662,8 +484,6 @@ class AdminController extends Controller
             'periode' => $periode,
         ]);
     }
-
-
 
     public function markAsPaid(Request $request)
     {
@@ -737,7 +557,7 @@ class AdminController extends Controller
                 DB::raw('SUM(CASE WHEN hk.status = "approved" AND hk.payment_status = "unpaid" THEN hk.jumlah_genteng * jg.gaji_per_seribu / 1000 ELSE 0 END) as total_gaji'),
                 DB::raw('SUM(CASE WHEN hk.status = "approved" AND hk.payment_status = "paid" THEN hk.jumlah_genteng * jg.gaji_per_seribu / 1000 ELSE 0 END) as total_gaji_diambil')
             )
-            ->groupBy('users.id', 'jg.nama_jenis', 'jg.gaji_per_seribu');
+            ->groupBy('users.id', 'users.name', 'jg.nama_jenis', 'jg.gaji_per_seribu');
 
         if ($startDate && $endDate) {
             $query->whereBetween('hk.tanggal_kerja', [$startDate, $endDate]);

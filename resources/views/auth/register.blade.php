@@ -4,7 +4,7 @@
 
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>PG Dwi Putra - Register</title>
+    <title>Dwi Putra - Register</title>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
     <meta name="author" content="PG Dwi Putra" />
     <link rel="shortcut icon" href="{{ asset('assets/images/logo_title.png') }}">
@@ -106,9 +106,9 @@
 
 
                         <div class="d-flex align-items-center mb-3 pb-2">
-                            <p class="m-0">Data pribadi Anda akan digunakan untuk mendukung pengalaman Anda di
-                                seluruh sistem ini, untuk mengelola akses ke akun Anda, dan untuk tujuan lain yang
-                                dijelaskan dalam kebijakan privasi kami.
+                            <p class="m-0">Data pribadi Anda akan digunakan untuk meningkatkan pengalaman Anda di
+                                seluruh sistem ini, mengelola akses ke akun Anda, serta meninjau dan memberikan
+                                persetujuan terhadap hasil kerja harian.
                             </p>
                         </div>
 
@@ -116,7 +116,8 @@
 
                         <div class="customer-option mt-4 text-center">
                             <span class="text-secondary">Sudah Punya Akun?</span>
-                            <a href="{{ route('login') }}" class="btn-text js-show-register">Login Sekarang</a>
+                            <a href="{{ route('login') }}"
+                                class="text-primary fw-bold text-decoration-underline">Login Sekarang</a>
                         </div>
                     </form>
                 </div>

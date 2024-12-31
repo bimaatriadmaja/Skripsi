@@ -44,7 +44,7 @@
                     <fieldset class="name">
                         <div class="body-title mb-10">Tanggal Kerja <span class="tf-color-1">*</span></div>
                         <input class="mb-10" type="date" name="tanggal_kerja"
-                            value="{{ old('tanggal_kerja', $hasilKerja->tanggal_kerja) }}" aria-required="true" required>
+                            value="{{ old('tanggal_kerja', $hasilKerja->tanggal_kerja) }}" aria-required="true">
                         @error('tanggal_kerja')
                             <span class="alert alert-danger" style="font-size: 1.5rem; padding: 20px;">
                                 {{ $message }}
@@ -54,7 +54,7 @@
                     <fieldset class="name">
                         <div class="body-title mb-10">Jumlah Genteng <span class="tf-color-1">*</span></div>
                         <input class="mb-10" type="number" name="jumlah_genteng"
-                            value="{{ old('jumlah_genteng', $hasilKerja->jumlah_genteng) }}" aria-required="true" required
+                            value="{{ old('jumlah_genteng', $hasilKerja->jumlah_genteng) }}" aria-required="true"
                             oninput="this.value = this.value.replace(/[^0-9]/g, '')"> <!-- Validasi angka positif -->
                         @error('jumlah_genteng')
                             <span class="alert alert-danger" style="font-size: 1.5rem; padding: 20px;">
@@ -74,3 +74,26 @@
         </div>
     </div>
 @endsection
+@push('scripts')
+    <script>
+        $(function() {
+            @if ($errors->any())
+                let errorMessage = '';
+                @foreach ($errors->get('tanggal_kerja') as $error)
+                    errorMessage += '<strong>Tanggal Kerja:</strong> {{ $error }}<br>';
+                @endforeach
+                @foreach ($errors->get('jumlah_genteng') as $error)
+                    errorMessage += '<strong>Jumlah Genteng:</strong> {{ $error }}<br>';
+                @endforeach
+
+                Swal.fire({
+                    title: '<span style="font-size: 24px;">Gagal!</span>',
+                    html: '<span style="font-size: 15px;">' + errorMessage + '</span>',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#dc3545', 
+                });
+            @endif
+        });
+    </script>
+@endpush

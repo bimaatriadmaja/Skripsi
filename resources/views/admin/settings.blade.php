@@ -55,3 +55,16 @@
         </div>
     </div>
 @endsection
+@push('scripts')
+    @if (session('success'))
+        <script>
+            Swal.fire({
+                title: '<span style="font-size: 24px;">Sukses</span>', 
+                html: '<span style="font-size: 15px;">{{ session('success') }}</span>',
+                icon: 'success',
+                confirmButtonText: 'OK',
+                confirmButtonColor: '#28a745' 
+            });
+        </script>
+    @endif
+@endpush

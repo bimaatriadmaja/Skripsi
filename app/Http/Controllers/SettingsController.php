@@ -49,7 +49,7 @@ class SettingsController extends Controller
         if ($request->filled('new_password')) {
             if (!$request->filled('old_password')) {
                 return redirect()->route('user.settings.edit')
-                    ->withErrors(['old_password.required' => 'Kata sandi saat ini harus diisi untuk mengganti kata sandi.'])
+                    ->withErrors(['old_password' => 'Kata sandi saat ini harus diisi.'])
                     ->withInput();
             }
 
@@ -70,7 +70,7 @@ class SettingsController extends Controller
             ]
         );
 
-        return redirect()->route('user.settings.index')->with('status', 'Pengaturan telah diubah!');
+        return redirect()->route('user.settings.index')->with('status', 'Profil telah diubah!');
     }
 
     // Admin Profile
@@ -134,6 +134,6 @@ class SettingsController extends Controller
             ]
         );
 
-        return redirect()->route('admin.settings.index')->with('success', 'Pengaturan telah diubah!');
+        return redirect()->route('admin.settings.index')->with('success', 'Profil telah diubah!');
     }
 }

@@ -40,6 +40,7 @@ class PdfExportController extends Controller
                 'jg.nama_jenis',
                 'jg.gaji_per_seribu',
                 'hasil_kerja.tanggal_kerja',
+                'hasil_kerja.catatan',
                 DB::raw('hasil_kerja.jumlah_genteng * jg.gaji_per_seribu / 1000 as gaji'),
                 DB::raw('COUNT(CASE WHEN hasil_kerja.status = "pending" THEN 1 END) as jumlah_pending_approval'),
                 DB::raw('COUNT(CASE WHEN hasil_kerja.status = "approved" AND hasil_kerja.payment_status = "unpaid" THEN 1 END) as jumlah_belum_dibayar'),
@@ -50,7 +51,7 @@ class PdfExportController extends Controller
                 DB::raw('SUM(CASE WHEN hasil_kerja.status = "approved" AND hasil_kerja.payment_status = "unpaid" THEN hasil_kerja.jumlah_genteng * jg.gaji_per_seribu / 1000 ELSE 0 END) as total_gaji'),
                 DB::raw('SUM(CASE WHEN hasil_kerja.status = "approved" AND hasil_kerja.payment_status = "paid" THEN hasil_kerja.jumlah_genteng * jg.gaji_per_seribu / 1000 ELSE 0 END) as total_gaji_diambil')
             )
-            ->groupBy('hasil_kerja.user_id', 'u.name', 'hasil_kerja.status', 'hasil_kerja.payment_status', 'hasil_kerja.jumlah_genteng', 'jg.nama_jenis', 'jg.gaji_per_seribu', 'hasil_kerja.tanggal_kerja');
+            ->groupBy('hasil_kerja.user_id', 'u.name', 'hasil_kerja.status', 'hasil_kerja.payment_status', 'hasil_kerja.jumlah_genteng', 'jg.nama_jenis', 'jg.gaji_per_seribu', 'hasil_kerja.tanggal_kerja', 'hasil_kerja.catatan');
     
         // Filter berdasarkan tanggal
         if ($startDate) {
@@ -102,7 +103,7 @@ class PdfExportController extends Controller
             'totalGajiDiambil',
             'firstData',  // Pastikan ini ada
             'startDateFormatted',
-            'endDateFormatted'
+            'endDateFormatted',
         ))
             ->setPaper('a4', 'portrait'); // Mengatur ukuran kertas A4 dan orientasi portrait
     
@@ -208,7 +209,8 @@ class PdfExportController extends Controller
                 'hasil_kerja.jumlah_genteng',
                 'jg.nama_jenis',
                 'jg.gaji_per_seribu',
-                'hasil_kerja.tanggal_kerja', // Pastikan kita mengambil tanggal kerja
+                'hasil_kerja.tanggal_kerja',
+                'hasil_kerja.catatan',
                 DB::raw('hasil_kerja.jumlah_genteng * jg.gaji_per_seribu / 1000 as gaji'),
                 DB::raw('COUNT(CASE WHEN hasil_kerja.status = "pending" THEN 1 END) as jumlah_pending_approval'),
                 DB::raw('COUNT(CASE WHEN hasil_kerja.status = "approved" AND hasil_kerja.payment_status = "unpaid" THEN 1 END) as jumlah_belum_dibayar'),
@@ -219,7 +221,7 @@ class PdfExportController extends Controller
                 DB::raw('SUM(CASE WHEN hasil_kerja.status = "approved" AND hasil_kerja.payment_status = "unpaid" THEN hasil_kerja.jumlah_genteng * jg.gaji_per_seribu / 1000 ELSE 0 END) as total_gaji'),
                 DB::raw('SUM(CASE WHEN hasil_kerja.status = "approved" AND hasil_kerja.payment_status = "paid" THEN hasil_kerja.jumlah_genteng * jg.gaji_per_seribu / 1000 ELSE 0 END) as total_gaji_diambil')
             )
-            ->groupBy('hasil_kerja.user_id', 'u.name', 'hasil_kerja.status', 'hasil_kerja.payment_status', 'hasil_kerja.jumlah_genteng', 'jg.nama_jenis', 'jg.gaji_per_seribu', 'hasil_kerja.tanggal_kerja'); // Pastikan 'tanggal_kerja' ada di group by
+            ->groupBy('hasil_kerja.user_id', 'u.name', 'hasil_kerja.status', 'hasil_kerja.payment_status', 'hasil_kerja.jumlah_genteng', 'jg.nama_jenis', 'jg.gaji_per_seribu', 'hasil_kerja.tanggal_kerja', 'hasil_kerja.catatan',);
 
         // Filter berdasarkan tanggal
         if ($start_date) {

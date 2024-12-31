@@ -41,14 +41,12 @@
                     <div class="wg-filter flex-grow">
                         <form class="d-flex flex-wrap gap-2" action="{{ route('user.filter') }}" method="GET">
                             <div class="d-flex gap-3 mb-2 w-100">
-                                <!-- Filter Mulai -->
                                 <div class="flex-grow-1">
                                     <label for="start_date" class="form-label"
                                         style="font-size: 1.5em; font-weight: 600;">Filter Mulai:</label>
                                     <input type="date" id="start_date" class="form-control" name="start_date"
                                         value="{{ request()->input('start_date', $startDate ?? '') }}">
                                 </div>
-                                <!-- Sampai Dengan -->
                                 <div class="flex-grow-1">
                                     <label for="end_date" class="form-label"
                                         style="font-size: 1.5em; font-weight: 600;">Sampai Dengan:</label>
@@ -56,49 +54,32 @@
                                         value="{{ request()->input('end_date', $endDate ?? '') }}">
                                 </div>
                             </div>
-
-                            <!-- Tombol Filter -->
                             <div class="d-flex gap-2 w-100">
                                 <button class="btn w-100 fs-5 text-white" type="submit"
-                                    style="background-color: #007bff; border-radius: 5px; font-size: 1.1em;">
+                                    style="background-color: #007bff; border-radius: 10px; font-size: 1.1em; padding: 10px 20px;">
                                     <i class="bi bi-filter"></i> Filter
                                 </button>
                             </div>
                         </form>
-
-                        <!-- Action Buttons -->
                         <div class="d-flex gap-3 mt-3 w-100">
-                            <!-- Clear Filter Button -->
                             <a href="{{ route('user.filter') }}?clear_filter=true"
                                 class="btn w-100 fs-5 d-flex align-items-center justify-content-center"
                                 style="background-color: #6c757d; color: #ffffff; border-radius: 10px; font-size: 1.1em;">
                                 <i class="bi bi-x-circle me-2"></i> Bersihkan
                             </a>
-
-                            <!-- Export PDF Button -->
-                            @if (request()->input('start_date') && request()->input('end_date'))
-                                <a href="{{ route('export.laporan-hasil-kerja-karyawan') }}?start_date={{ request('start_date') }}&end_date={{ request('end_date') }}"
-                                    class="btn btn-success w-100 d-flex align-items-center justify-content-center"
-                                    style="font-size: 1.2em; border-radius: 10px; padding: 10px 20px;">
-                                    <i class="bi bi-file-earmark-pdf me-2"></i> Export PDF
-                                </a>
-                            @else
-                                <button class="btn btn-success w-100 d-flex align-items-center justify-content-center"
-                                    style="font-size: 1.2em; border-radius: 10px; padding: 10px 20px;" disabled>
-                                    Export PDF
-                                </button>
-                            @endif
-
-                            <!-- Add Work Result Button (Blue color) -->
+                            <a href="{{ route('export.laporan-hasil-kerja-karyawan') }}?start_date={{ request('start_date') }}&end_date={{ request('end_date') }}"
+                                class="btn btn-success w-100 d-flex align-items-center justify-content-center"
+                                style="font-size: 1.2em; border-radius: 10px; padding: 10px 20px;" id="export-pdf-btn-3">
+                                <i class="bi bi-file-earmark-pdf me-2"></i> Export PDF
+                            </a>
                             <a class="btn w-100 fs-5 d-flex align-items-center justify-content-center"
                                 href="{{ route('user.hasil_kerja.add') }}"
                                 style="background-color: #007bff; color: white; border-radius: 10px; font-size: 1.1em; padding: 10px 20px;">
-                                <i class="icon-plus me-2"></i>Tambah Hasil Kerja
+                                <i class="icon-plus me-2"></i>Tambah Hasil
                             </a>
                         </div>
                     </div>
                 </div>
-
                 {{-- <form class="form-search" action="{{ route('user.search') }}" method="GET">
                             <fieldset class="name">
                                 <input type="text" placeholder="Cari disini..." name="search" tabindex="2"
@@ -116,7 +97,6 @@
                                 @endif
                             </div>
                         </form> --}}
-
                 @if (request('start_date') && request('end_date'))
                     @php
                         $startDate = \Carbon\Carbon::parse(request('start_date'))
@@ -216,29 +196,35 @@
                                         </td>
                                         <td>{{ $hasil->jumlah_genteng }} Biji</td>
                                         <td>
-                                            @if (isset($hasil->jumlah_genteng) && !is_null($hasil->jumlah_genteng) && isset($hasil->user->jenis_genteng))
+                                            @php
+                                                $jenisGenteng = isset($hasil->user->jenis_genteng)
+                                                    ? $hasil->user->jenis_genteng
+                                                    : null;
+                                                $gajiPerSeribu = $jenisGenteng ? $jenisGenteng->gaji_per_seribu : null;
+                                            @endphp
+                                            @if (isset($hasil->jumlah_genteng) && !is_null($hasil->jumlah_genteng) && $gajiPerSeribu)
                                                 @php
-                                                    $jenisGenteng = $hasil->user->jenis_genteng;
-                                                    $gajiPerSeribu = $jenisGenteng ? $jenisGenteng->gaji_per_seribu : 0;
                                                     $gaji = $gajiPerSeribu * ($hasil->jumlah_genteng / 1000);
                                                 @endphp
-                                                (Rp. {{ number_format($gaji, 0, ',', '.') }})
+                                                Rp. {{ number_format($gaji, 0, ',', '.') }}
+                                            @else
+                                                <span>Belum Ditentukan</span>
                                             @endif
                                         </td>
                                         <td>
                                             @if ($hasil->status == 'approved')
-                                                <span class="badge bg-success">Disetujui</span>
+                                                <span class="badge bg-success fs-5 p-3">Disetujui</span>
                                             @elseif($hasil->status == 'rejected')
-                                                <span class="badge bg-danger">Ditolak</span>
+                                                <span class="badge bg-danger fs-5 p-3">Ditolak</span>
                                             @else
-                                                <span class="badge bg-warning">Diproses</span>
+                                                <span class="badge bg-warning fs-5 p-3">Diproses</span>
                                             @endif
                                         </td>
                                         <td>
                                             @if ($hasil->payment_status == 'paid')
-                                                <span class="badge bg-primary">Sudah diambil</span>
+                                                <span class="badge bg-primary fs-5 p-3">Sudah diambil</span>
                                             @else
-                                                <span class="badge bg-danger">Belum diambil</span>
+                                                <span class="badge bg-danger fs-5 p-3">Belum diambil</span>
                                             @endif
                                         </td>
                                         <td>{{ $hasil->catatan }}</td>
@@ -286,14 +272,16 @@
             $('.delete').on('click', function(e) {
                 e.preventDefault();
                 var form = $(this).closest('form');
-                swal({
+                Swal.fire({
                     title: "Apakah kamu yakin?",
                     text: "Data akan dihapus secara permanen",
-                    type: "warning",
-                    buttons: ["Tidak", "Ya"],
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonText: 'Ya',
+                    cancelButtonText: 'Tidak',
                     confirmButtonColor: '#dc3545'
                 }).then(function(result) {
-                    if (result) {
+                    if (result.isConfirmed) {
                         form.submit();
                     }
                 });
@@ -301,26 +289,40 @@
         });
 
         @if (session('error'))
-            console.log('Session Error:', '{{ session('error') }}');
             Swal.fire({
-                title: 'Gagal!',
-                text: '{{ session('error') }}',
+                title: '<span style="font-size: 24px;">Gagal!</span>',
+                html: '<span style="font-size: 15px;">' + @json(session('error')) + '</span>',
                 icon: 'error',
                 confirmButtonText: 'OK',
+                confirmButtonColor: '#dc3545'
             });
         @endif
 
+        @if (session('success'))
+            Swal.fire({
+                title: '<span style="font-size: 24px;">Sukses!</span>', 
+                html: '<span style="font-size: 15px;">{{ session('success') }}</span>',
+                icon: 'success',
+                confirmButtonText: 'OK',
+                confirmButtonColor: '#28a745'
+            });
+        @endif
 
-        function validateDates() {
-            var startDate = document.getElementById('start_date').value;
-            var endDate = document.getElementById('end_date').value;
+        document.getElementById('export-pdf-btn-3').addEventListener('click', function(e) {
+        // Cek apakah filter start_date dan end_date ada
+        var startDate = new URLSearchParams(window.location.search).get('start_date');
+        var endDate = new URLSearchParams(window.location.search).get('end_date');
 
-            if ((startDate && !endDate) || (!startDate && endDate)) {
-                alert("Anda harus mengisi tanggal mulai dan tanggal akhir.");
-                return false; // Prevent form submission
-            }
-
-            return true;
+        if (!startDate || !endDate) {
+            // Jika tidak ada filter, tampilkan SweetAlert error
+            e.preventDefault(); // Menghentikan pengiriman request
+            Swal.fire({
+                icon: 'error',
+                title: '<span style="font-size: 24px;">Gagal!</span>',
+                html: '<span style="font-size: 15px;">Filter terlebih dahulu untuk mencetak laporan.</span>',
+                confirmButtonColor: '#dc3545',
+            });
         }
+    });
     </script>
 @endpush

@@ -23,7 +23,7 @@
                         <i class="icon-chevron-right"></i>
                     </li>
                     <li>
-                        <div class="text-tiny">Karyawan</div>
+                        <div class="text-tiny">Data Hasil Kerja</div>
                     </li>
                     <li>
                         <i class="icon-chevron-right"></i>

@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>PG Dwi Putra</title>
+    <title>Dwi Putra</title>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
     <meta name="author" content="pg dwi putra" />
     <link rel="stylesheet" type="text/css" href="{{ asset('css/animate.min.css') }}">
@@ -64,7 +64,14 @@
                                 <li class="menu-item">
                                     <a href="{{ route('admin.jenis-genteng.index') }}" class="">
                                         <div class="icon"><i class="bi bi-cash-stack"></i></div>
-                                        <div class="text">Kalkulasi Gaji</div>
+                                        <div class="text">Besaran Gaji</div>
+                                    </a>
+                                </li>
+                                <li class="menu-item">
+                                    <a href="{{ route('admin.hasil-kerja-sidebar') }}" class="">
+                                        <div class="icon"><i class="bi bi-stack"></i>
+                                        </div>
+                                        <div class="text">Data Hasil Kerja</div>
                                     </a>
                                 </li>
                                 <li class="menu-item">
@@ -72,7 +79,7 @@
                                         <div class="icon"><i class="bi bi-file-earmark"></i></div>
                                         <div class="text">Laporan Keseluruhan</div>
                                     </a>
-                                </li>                                
+                                </li>
                                 <li class="menu-item">
                                     <a href="{{ route('admin.settings.index') }}" class="">
                                         <div class="icon"><i class="bi bi-person-fill"></i></div>
@@ -146,7 +153,7 @@
                     <div class="main-content">
                         @yield('content')
                         <div class="bottom-page">
-                            <div class="body-text">Copyright © 2024 PG Dwi Putra</div>
+                            <div class="body-text">Copyright © <span id="year"></span> PG Dwi Putra</div>
                         </div>
                     </div>
                 </div>
@@ -154,14 +161,15 @@
         </div>
     </div>
 
-
     <script src="{{ asset('js/jquery.min.js') }}"></script>
     <script src="{{ asset('js/bootstrap.min.js') }}"></script>
     <script src="{{ asset('js/bootstrap-select.min.js') }}"></script>
     <script src="{{ asset('js/sweetalert.min.js') }}"></script>
     <script src="{{ asset('js/apexcharts/apexcharts.js') }}"></script>
     <script src="{{ asset('js/main.js') }}"></script>
-
+    <script>
+        document.getElementById('year').textContent = new Date().getFullYear();
+    </script>
     @stack('scripts')
 </body>
 

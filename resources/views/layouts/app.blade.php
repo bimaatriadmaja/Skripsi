@@ -7,7 +7,7 @@
 
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>PG Dwi Putra</title>
+    <title>Dwi Putra</title>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
     <meta name="author" content="pg dwi putra" />
     <link rel="stylesheet" type="text/css" href="{{ asset('css/animate.min.css') }}">
@@ -144,7 +144,7 @@
                     <div class="main-content">
                         @yield('content')
                         <div class="bottom-page">
-                            <div class="body-text">Copyright © 2024 PG Dwi Putra</div>
+                            <div class="body-text">Copyright © <span id="year"></span> PG Dwi Putra</div>
                         </div>
                     </div>
                 </div>
@@ -158,7 +158,9 @@
     <script src="{{ asset('js/sweetalert.min.js') }}"></script>
     <script src="{{ asset('js/apexcharts/apexcharts.js') }}"></script>
     <script src="{{ asset('js/main.js') }}"></script>
-
+    <script>
+        document.getElementById('year').textContent = new Date().getFullYear();
+    </script>
     @stack('scripts')
 </body>
 

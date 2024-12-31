@@ -44,7 +44,8 @@
                                     <p class="pt-2"><strong>Gaji per 1000 Genteng:</strong> Rp
                                         {{ number_format($user->jenis_genteng->gaji_per_seribu, 0, ',', '.') }}</p>
                                 @else
-                                    <p class="pt-2"><strong>Genteng yang dicetak:</strong> Belum diatur</p>
+                                    <p class="pt-2"><strong>Genteng yang dicetak:</strong> Belum ditentukan</p>
+                                    <p class="pt-2"><strong>Gaji per 1000 Genteng:</strong> Belum ditentukan</p>
                                 @endif
                                 <div class="pt-5">
                                     <p>~ Apabila ingin mengganti password, include di dalam tombol Edit Profil ~</p>
@@ -63,3 +64,16 @@
         </div>
     </div>
 @endsection
+@push('scripts')
+@if (session('status'))
+    <script>
+        Swal.fire({
+            title: '<span style="font-size: 24px;">Sukses</span>', 
+            html: '<span style="font-size: 15px;">{{ session('status') }}</span>',
+            icon: 'success',
+            confirmButtonText: 'OK',
+            confirmButtonColor: '#28a745' 
+        });
+    </script>
+@endif
+@endpush
